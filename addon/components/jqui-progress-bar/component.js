@@ -1,8 +1,12 @@
-import Ember from 'ember';
+import Component from '@ember/component';
 import jquiWidget from 'ember-cli-jquery-ui/mixins/jqui-widget';
 
-export default Ember.Component.extend(jquiWidget, {
-    uiType: 'progressbar',
-    uiOptions: ['value', 'max'],
-    uiEvents: ['change', 'complete']
+export default Component.extend(jquiWidget, {
+  init() {
+    this._super(...arguments);
+
+    this.uiType = 'progressbar';
+    this.uiOptions = ['value', 'max'];
+    this.uiEvents = ['change', 'complete'];
+  }
 });

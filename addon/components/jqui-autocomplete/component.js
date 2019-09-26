@@ -1,8 +1,12 @@
-import Ember from 'ember';
+import TextField from '@ember/component/text-field';
 import jquiWidget from 'ember-cli-jquery-ui/mixins/jqui-widget';
 
-export default Ember.TextField.extend(jquiWidget, {
-    uiType: 'autocomplete',
-    uiOptions: ['autofocus', 'delay', 'disabled', 'minLength', 'position', 'source'  ],
-    uiEvents: ['close', 'search']
+export default TextField.extend(jquiWidget, {
+    init() {
+      this._super(...arguments);
+
+      this.uiType = 'autocomplete';
+      this.uiOptions = ['autofocus', 'delay', 'disabled', 'minLength', 'position', 'source'  ];
+      this.uiEvents = ['close', 'search'];
+    }
 });

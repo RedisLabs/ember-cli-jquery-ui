@@ -1,8 +1,12 @@
-import Ember from 'ember';
+import Component from '@ember/component';
 import jquiWidget from 'ember-cli-jquery-ui/mixins/jqui-widget';
 
-export default Ember.Component.extend(jquiWidget, {
-    uiType: 'menu',
-    uiOptions: ['disabled'],
-    uiEvents: ['blur', 'create', 'focus', 'select']
+export default Component.extend(jquiWidget, {
+  init() {
+    this._super(...arguments);
+
+    this.uiType = 'menu';
+    this.uiOptions = ['disabled'];
+    this.uiEvents = ['blur', 'create', 'focus', 'select'];
+  }
 });

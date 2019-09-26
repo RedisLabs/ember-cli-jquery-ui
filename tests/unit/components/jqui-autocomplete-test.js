@@ -1,21 +1,16 @@
-import {
-  moduleForComponent,
-  test
-} from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
+import hbs from 'htmlbars-inline-precompile';
 
-moduleForComponent('jqui-autocomplete', 'JquiAutocompleteComponent', {
-  // specify the other units that are required for this test
-  // needs: ['component:foo', 'helper:bar']
-});
+module('jqui-autocomplete', 'JquiAutocompleteComponent', function(hooks){
+  setupRenderingTest(hooks);
 
-test('it renders', function(assert) {
-  assert.expect(2);
+  test('it renders', async function(assert) {
+    assert.expect(1);
 
-  // creates the component instance
-  var component = this.subject();
-  assert.equal(component._state, 'preRender');
-
-  // appends the component to the page
-  this.render();
-  assert.equal(component._state, 'inDOM');
+    // creates the component instance
+    await render(hbs`<JquiAutocomplete/>`);
+    assert.ok(this.element.querySelector('input').getAttribute('class').includes('ui-autocomplete-input'));
+  });
 });

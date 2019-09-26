@@ -1,72 +1,84 @@
-import Ember from 'ember';
+import Mixin from '@ember/object/mixin';
+import { scheduleOnce } from '@ember/runloop';
 import $ from 'jquery';
 
 // Create a new mixin for jQuery UI widgets using the Ember
 // mixin syntax.
-export default Ember.Mixin.create({
+
+// eslint-disable-next-line ember/no-new-mixins
+export default Mixin.create({
 
     // When Ember creates the view's DOM element, it will call this
     // method.
-    setup: Ember.on('didInsertElement', function() {
-        var _this = this;
-        Ember.run.scheduleOnce('afterRender', function() {
+    didInsertElement: function() {
+      this._super(...arguments);
 
-            // Make jQuery UI options available as Ember properties
-            var options = _this._gatherOptions();
+      let _this = this;
+      scheduleOnce('afterRender', afterREnder);
 
-            // Make sure that jQuery UI events trigger methods on this view.
-            _this._gatherEvents(options);
+      function afterREnder() {
 
-            var ui;
-            var uiType = _this.get('uiType');
+        // Make jQuery UI options available as Ember properties
+        let options = _this._gatherOptions();
 
-            // Workaround for bug in jQuery UI datepicker
-            // $.ui.datepicker is not a function
-            if (uiType === "datepicker") {
-                _this.$().datepicker(
-                    $.extend(options, {
-                        onSelect: function() { _this.$().change(); }
-                    })
-                );
-                ui = {
-                    option: function(key, value) {
-                        _this.$().datepicker('option', key, value);
-                    },
-                    _destroy: function() {
-                        _this.$().datepicker('destroy');
-                    }
-                };
-            } else {
+        // Make sure that jQuery UI events trigger methods on this view.
+        _this._gatherEvents(options);
 
-                // Create a new instance of the jQuery UI widget based on its `uiType`
-                // and the current element.
-                ui = Ember.$.ui[_this.get('uiType')](options, _this.get('element'));
+        let ui;
+        let uiType = _this.get('uiType');
+
+        // Workaround for bug in jQuery UI datepicker
+        // $.ui.datepicker is not a function
+        if (uiType === "datepicker") {
+          _this.$().datepicker(
+            // eslint-disable-next-line ember/no-new-mixins
+            $.extend(options, {
+              onSelect: function () {
+                _this.$().change();
+              }
+            })
+          );
+          ui = {
+            option: function (key, value) {
+              _this.$().datepicker('option', key, value);
+            },
+            _destroy: function () {
+              _this.$().datepicker('destroy');
             }
+          };
+        } else {
 
-            // Save off the instance of the jQuery UI widget as the `ui` property
-            // on this Ember view.
-            _this.set('ui', ui);
+          // Create a new instance of the jQuery UI widget based on its `uiType`
+          // and the current element.
+          ui = $.ui[_this.get('uiType')](options, _this.get('element'));
+        }
 
-        });
-    }),
+        // Save off the instance of the jQuery UI widget as the `ui` property
+        // on this Ember view.
+        _this.set('ui', ui);
+
+      }
+    },
 
     // When Ember tears down the view's DOM element, it will call
     // this method.
-    tearDown: Ember.on('willDestroyElement', function() {
-        var ui = this.get('ui');
+    willDestroyElement: function() {
+        this._super(...arguments);
+
+        let ui = this.get('ui');
 
         if (ui) {
             // Tear down any observers that were created to make jQuery UI
             // options available as Ember properties.
-            var observers = this._observers;
-            for (var prop in observers) {
+            let observers = this._observers;
+            for (let prop in observers) {
                 if (observers.hasOwnProperty(prop)) {
                     this.removeObserver(prop, observers[prop]);
                 }
             }
             ui._destroy();
         }
-    }),
+    },
 
     // Each jQuery UI widget has a series of options that can be configured.
     // For instance, to disable a button, you call
@@ -74,7 +86,7 @@ export default Ember.Mixin.create({
     // with Ember bindings, any time the Ember property for a
     // given jQuery UI option changes, we update the jQuery UI widget.
     _gatherOptions: function() {
-        var uiOptions = this.get('uiOptions'), options = {};
+        let uiOptions = this.get('uiOptions'), options = {};
 
         // The view can specify a list of jQuery UI options that should be treated
         // as Ember properties.
@@ -84,8 +96,8 @@ export default Ember.Mixin.create({
             // Set up an observer on the Ember property. When it changes,
             // call jQuery UI's `option` method to reflect the property onto
             // the jQuery UI widget.
-            var observer = function() {
-                var value = this.get(key);
+            let observer = function() {
+                let value = this.get(key);
                 this.get('ui').option(key, value);
             };
             this.addObserver(key, observer);
@@ -104,9 +116,9 @@ export default Ember.Mixin.create({
     // could implement the `complete` method to be notified when the jQuery
     // UI widget triggered the event.
     _gatherEvents: function(options) {
-        var uiEvents = this.get('uiEvents') || [], self = this;
+        let uiEvents = this.get('uiEvents') || [], self = this;
         uiEvents.forEach(function(eventName) {
-            var callback = self.uiActions && self.uiActions[eventName];
+            let callback = self.uiActions && self.uiActions[eventName];
 
             // You can register a handler for a jQuery UI event by passing
             // it in along with the creation options. Update the options hash
